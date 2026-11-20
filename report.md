@@ -12,12 +12,12 @@
 
 ## 1. Executive Summary
 
-EverOS is a local-first agent-memory service. Its `SECURITY.md` declares "HTTP API exposure to untrusted network" out of scope and documents that the API has no built-in authentication. This report tests whether that threat model survives a browser: an arbitrary web page is not "the network", but it can issue credentialed requests to `127.0.0.1`.
+EverOS is a local-first agent-memory service. Its `SECURITY.md` declares "HTTP API exposure to untrusted network" out of scope and documents that the API has no built-in authentication. This report tests whether that threat model survives a browser: an arbitrary web page is not "the network", but it can issue cross-origin requests to `127.0.0.1`.
 
 Two independent defaults combine into full local-file exfiltration:
 
 1. **Root cause A — unrestricted `file://` ingestion.** `POST /api/v2/memory/add` accepts a `ContentItem` with `uri: file:///...`. With the default `file_uri_allow_dirs = []`, any file readable by the EverOS process is hydrated, parsed, and its text is stored as `parsed_content` and returned by the search API.
-2. **Root cause B — credentialed wildcard CORS.** CORS defaults are `allow_origins=["*"]` **and** `allow_credentials=True`. Starlette reflects every `Origin` and returns `Access-Control-Allow-Credentials: true`, so any website can call the unauthenticated API and read the responses.
+2. **Root cause B — permissive CORS on an unauthenticated API.** CORS defaults are `allow_origins=["*"]` **and** `allow_credentials=True`. Starlette reflects every `Origin` and returns `Access-Control-Allow-Credentials: true`, so any website can call the unauthenticated API and read the responses.
 
 Result, demonstrated end-to-end in a real browser: a victim visiting a malicious page has arbitrary local files (up to 50 MB per item) read by EverOS and exfiltrated to an attacker-controlled collector, and attacker-chosen memory written — with no prompt and no victim interaction beyond loading the page.
 
@@ -27,7 +27,7 @@ Result, demonstrated end-to-end in a real browser: a victim visiting a malicious
 Victim visits malicious website (http://evil.example:8000 — demonstrated)
           |
           v
-Browser issues credentialed requests to 127.0.0.1:18777
+Browser issues cross-origin requests to 127.0.0.1:18777
           |
           v
 CORS reflects Origin + Allow-Credentials: true  (root cause B)
@@ -65,6 +65,7 @@ Attacker-controlled collector receives file contents
 
 - HTTPS origins were not tested; all browser evidence uses `http://` origins. HTTP origins are sufficient because the target API itself is plain HTTP on loopback — a secure-context HTTPS page can issue these requests, but that specific combination was not exercised.
 - A `file://` HTML page attacking the API was not tested; `Origin: null` reflection is demonstrated at the HTTP layer only.
+- The browser PoC uses a distinct hostname mapped to loopback (`--host-resolver-rules='MAP evil.example 127.0.0.1'`). It validates cross-origin browser access but does not independently establish behavior when the initiating page is served from a public IP address, particularly under browser Local Network Access protections.
 - No code execution, no authentication bypass (the API has none by design), and no access to files the EverOS process cannot read.
 
 ### 1.4 Risk Profile
@@ -116,7 +117,7 @@ The only guard is `file_uri_allow_dirs`. Its default is an empty list (`src/ever
 
 The parsed content persists and is returned verbatim by the search endpoint (`UnprocessedMessageDTO.content[].parsed_content`).
 
-**Root cause B — credentialed wildcard CORS.**
+**Root cause B — permissive CORS on an unauthenticated API.**
 `app.py` installs `CORSMiddleware` with `allow_credentials=DEFAULT_CORS_ALLOW_CREDENTIALS` (`src/everos/entrypoints/api/app.py:63`). Defaults (`src/everos/entrypoints/api/middleware/cors.py:9,12`):
 
 ```
@@ -124,7 +125,7 @@ DEFAULT_CORS_ALLOW_CREDENTIALS = True
 DEFAULT_CORS_ORIGINS = ["*"]
 ```
 
-Starlette cannot satisfy wildcard + credentials literally, so it reflects the request `Origin` and sets `Access-Control-Allow-Credentials: true` — converting the wildcard into "allow every origin, with credentials". Combined with the intentionally absent API authentication, any web page can invoke the API with the victim's local privileges and read the responses.
+Starlette cannot satisfy wildcard + credentials literally, so it reflects the request `Origin` and sets `Access-Control-Allow-Credentials: true` — converting the wildcard into "allow every origin, with credentials". The demonstrated PoC does not send cookies or HTTP authentication (`fetch` without `credentials: "include"`); none are needed because the API has no authentication by design. The defect is that CORS imposes no meaningful origin restriction on an unauthenticated local API: any web page can invoke it with the victim's local privileges and read the responses.
 
 **Secondary observation — no ownership binding on search.** The search endpoint does not enforce ownership based on the supplied `user_id`: a caller that knows a `session_id` can retrieve its buffered messages regardless of the `user_id` supplied. Since the API has no authentication by design, this is not an authentication bypass; it means session IDs are the only access control on buffered memory content.
 
@@ -247,7 +248,7 @@ All captures are under `evidence/`; the complete SHA-256 manifest for the archiv
 
 #### Impact
 
-An attacker who can get a victim to load a page can read any file the EverOS process can access, up to 50 MB per item, subject only to OS permissions — SSH private keys, cloud credentials, shell history, source code, application configuration. The victim's files are exfiltrated without any prompt. Integrity impact is limited to attacker-controlled memory writes that can steer later agent behavior (context poisoning); no code execution was demonstrated. Confidentiality impact is high.
+An attacker who can get a victim to load a page can read any file the EverOS process can access, up to 50 MB per item, subject only to OS permissions — SSH private keys, cloud credentials, shell history, source code, application configuration. This requires the optional `[multimodal]` parser to be configured (see §1.2); it is not a default-on requirement to boot EverOS. The victim's files are exfiltrated without any prompt. Integrity impact is limited to attacker-controlled memory writes that can steer later agent behavior (context poisoning); no code execution was demonstrated. Confidentiality impact is high.
 
 #### Affected Demographic
 
