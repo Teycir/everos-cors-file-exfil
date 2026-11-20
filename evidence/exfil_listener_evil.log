@@ -1,0 +1,2 @@
+[*] listening 0.0.0.0:8899, exfil -> /home/teycir/BugBounty/everos/20261120/153647/pocs/exfil
+[+] /exfil 854 bytes -> /home/teycir/BugBounty/everos/20261120/153647/pocs/exfil/20261120T154636Z-0.json

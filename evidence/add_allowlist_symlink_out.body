@@ -1,0 +1,1 @@
+{"request_id":"1f5ac0061aed4f6dba6290d27f45c7ae","error":{"code":"UNSUPPORTED_FORMAT","message":"file uri /tmp/opencode/outside-canary.txt is outside the allowed roots (set EVEROS_MULTIMODAL__FILE_URI_ALLOW_DIRS to permit it)","timestamp":"2026-11-20T15:44:10.698546+00:00","path":"/api/v2/memory/add"}}

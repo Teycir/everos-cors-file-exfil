@@ -1,0 +1,2 @@
+[*] listening 0.0.0.0:8899, exfil -> /home/teycir/Repos/everos-cors-file-exfil/poc/exfil
+[+] /exfil 854 bytes -> /home/teycir/Repos/everos-cors-file-exfil/poc/exfil/20261120T161300Z-4.json

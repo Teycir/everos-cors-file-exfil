@@ -1,0 +1,13 @@
+HTTP/1.1 200 OK
+date: Fri, 20 Nov 2026 15:35:09 GMT
+server: uvicorn
+vary: Origin
+access-control-allow-methods: DELETE, GET, HEAD, OPTIONS, PATCH, POST, PUT
+access-control-max-age: 600
+access-control-allow-credentials: true
+access-control-allow-origin: https://evil.example
+access-control-allow-headers: content-type
+content-length: 2
+content-type: text/plain; charset=utf-8
+x-request-id: 56187ef153c14b3fa2e471f88e79778e
+

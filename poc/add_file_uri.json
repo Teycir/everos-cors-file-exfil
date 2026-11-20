@@ -1,0 +1,1 @@
+{"session_id":"report-poc-1","messages":[{"sender_id":"u1","role":"user","timestamp":1795188909538,"content":[{"type":"doc","name":"hostname.txt","uri":"file:///etc/hostname","ext":"txt"}]}],"defer_extraction":true}

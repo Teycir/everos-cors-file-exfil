@@ -1,0 +1,2 @@
+598:    file_uri_allow_dirs: list[str] = []
+601:    file_uri_max_bytes: int = 50 * 1024 * 1024

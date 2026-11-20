@@ -1,0 +1,4 @@
+9:DEFAULT_CORS_ALLOW_CREDENTIALS: bool = True
+10:DEFAULT_CORS_ALLOW_HEADERS: list[str] = ["*"]
+11:DEFAULT_CORS_ALLOW_METHODS: list[str] = ["*"]
+12:DEFAULT_CORS_ORIGINS: list[str] = ["*"]

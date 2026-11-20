@@ -1,0 +1,1 @@
+{"request_id":"87cab81e71224602be5f6eecd8738f58","error":{"code":"UNSUPPORTED_FORMAT","message":"file uri /etc/hostname is outside the allowed roots (set EVEROS_MULTIMODAL__FILE_URI_ALLOW_DIRS to permit it)","timestamp":"2026-11-20T15:36:14.493404+00:00","path":"/api/v2/memory/add"}}
