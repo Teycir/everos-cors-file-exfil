@@ -7,7 +7,7 @@
 | Target | EverOS 1.7.1 (Python/FastAPI), commit `e5778edb4cbac71e359ea375f38cf805aae32b0c` |
 | Engagement | Disposable local lab: `127.0.0.1:18777`, root under `/tmp`, plus `127.0.0.1:18778` for the allowlist control. No external systems touched. |
 | Generated (UTC) | 2026-11-20T15:37:25Z |
-| Re-verified (UTC) | 2026-11-20T15:46:36Z |
+| Re-verified (UTC) | 2026-11-20T16:13:00Z |
 | Status | FINAL |
 
 ## 1. Executive Summary
@@ -17,9 +17,11 @@ EverOS is a local-first agent-memory service. Its `SECURITY.md` declares "HTTP A
 Two independent defaults combine into full local-file exfiltration:
 
 1. **Root cause A — unrestricted `file://` ingestion.** `POST /api/v2/memory/add` accepts a `ContentItem` with `uri: file:///...`. With the default `file_uri_allow_dirs = []`, any file readable by the EverOS process is hydrated, parsed, and its text is stored as `parsed_content` and returned by the search API.
-2. **Root cause B — permissive CORS on an unauthenticated API.** CORS defaults are `allow_origins=["*"]` **and** `allow_credentials=True`. Starlette reflects every `Origin` and returns `Access-Control-Allow-Credentials: true`, so any website can call the unauthenticated API and read the responses.
+2. **Root cause B — permissive CORS on an unauthenticated API.** CORS defaults are `allow_origins=["*"]` **and** `allow_credentials=True`. For cross-origin requests Starlette reflects the `Origin` and returns `Access-Control-Allow-Credentials: true`, so any website can call the unauthenticated API and read the responses.
 
 Result, demonstrated end-to-end in a real browser: a victim visiting a malicious page has arbitrary local files (up to 50 MB per item) read by EverOS and exfiltrated to an attacker-controlled collector, and attacker-chosen memory written — with no prompt and no victim interaction beyond loading the page.
+
+The security issue is **browser-mediated local file disclosure through an unauthenticated local API**. Permissive CORS is the enabling mechanism that lets a remote web page reach the loopback API; it is not the whole vulnerability.
 
 ### 1.1 Attack chain
 
@@ -58,7 +60,7 @@ Attacker-controlled collector receives file contents
 
 - Cross-origin preflight and data reads from `https://evil.example` over plain HTTP requests.
 - Reflected `Access-Control-Allow-Origin` and `Access-Control-Allow-Credentials: true`, including for `Origin: null`.
-- Full browser chain in headless Chromium 157 from a **non-loopback** origin `http://evil.example:8000` (via `--host-resolver-rules`): the page read `file:///etc/hostname`, obtained `teycir-G5-KF5`, and POSTed it to the collector. An earlier run from `http://127.0.0.1:8000` is also captured.
+- Full browser chain in headless Chromium 157 from a **distinct cross-origin hostname `evil.example` mapped to loopback for controlled testing** (`--host-resolver-rules`): the page read `file:///etc/hostname`, obtained `teycir-G5-KF5`, and POSTed it to the collector. An earlier run from `http://127.0.0.1:8000` is also captured.
 - Direct API file read of `/etc/hostname` with allowlist negative controls (configured allowlist, symlink, `..` traversal, `file://localhost/` all rejected; `/etc/shadow` unreadable → HTTP 500, no content).
 
 **Not demonstrated (do not read as claims):**
@@ -106,7 +108,7 @@ Overall risk: **High** — CVSS 3.1 **8.2**.
 - **Authentication required:** No (none exists)
 - **User interaction required:** Yes — victim visits an attacker-controlled page
 - **Prerequisites:** `[multimodal]` parser configured (see §1.2)
-- **Verified at (UTC):** 2026-11-20T15:35:09Z (API captures), 2026-11-20T15:46:36Z (browser re-run from `http://evil.example:8000`)
+- **Verified at (UTC):** 2026-11-20T15:35:09Z (API captures), 2026-11-20T16:13:00Z (browser re-run from `http://evil.example:8000`)
 
 #### Issue Description
 
@@ -125,7 +127,7 @@ DEFAULT_CORS_ALLOW_CREDENTIALS = True
 DEFAULT_CORS_ORIGINS = ["*"]
 ```
 
-Starlette cannot satisfy wildcard + credentials literally, so it reflects the request `Origin` and sets `Access-Control-Allow-Credentials: true` — converting the wildcard into "allow every origin, with credentials". The demonstrated PoC does not send cookies or HTTP authentication (`fetch` without `credentials: "include"`); none are needed because the API has no authentication by design. The defect is that CORS imposes no meaningful origin restriction on an unauthenticated local API: any web page can invoke it with the victim's local privileges and read the responses.
+With these defaults, cross-origin browser JavaScript can read API responses: preflight succeeds, the server reflects the request `Origin` with `Access-Control-Allow-Credentials: true`, and the API requires no authentication. The demonstrated PoC does not send cookies or HTTP authentication (`fetch` without `credentials: "include"`); none are needed because the API has no authentication by design. The defect is that CORS imposes no meaningful origin restriction on an unauthenticated local API: any web page can invoke it with the victim's local privileges and read the responses.
 
 **Secondary observation — no ownership binding on search.** The search endpoint does not enforce ownership based on the supplied `user_id`: a caller that knows a `session_id` can retrieve its buffered messages regardless of the `user_id` supplied. Since the API has no authentication by design, this is not an authentication bypass; it means session IDs are the only access control on buffered memory content.
 
@@ -174,7 +176,7 @@ curl -s -X POST http://127.0.0.1:18777/api/v2/memory/search \
 python3 poc/everos_file_read.py --file file:///etc/hostname --session final-poc-1
 ```
 
-5. For the browser chain: serve `poc/driveby.html`, start `poc/exfil_listener.py`, and open the page from a non-loopback origin. The verified invocation used Chromium with `--host-resolver-rules='MAP evil.example 127.0.0.1'` and origin `http://evil.example:8000` (`poc/browser_driveby.sh`); an earlier loopback-origin run used `http://127.0.0.1:8000`.
+5. For the browser chain: serve `poc/driveby.html`, start `poc/exfil_listener.py`, and open the page from a distinct cross-origin hostname mapped to loopback (the verified invocation used Chromium with `--host-resolver-rules='MAP evil.example 127.0.0.1'` and origin `http://evil.example:8000`, via `poc/browser_driveby.sh`; see the §1.3 caveat on what this does and does not establish). An earlier loopback-origin run used `http://127.0.0.1:8000`.
 
 #### Request
 
@@ -235,7 +237,8 @@ All captures are under `evidence/`; the complete SHA-256 manifest for the archiv
 - `evidence/search_cross_user.body`, `evidence/search_cross_user.headers` — session `victim-private-1` created as `sender_id: u1` was read with `user_id: "attacker"`; response contains `VICTIM-SECRET-4f9a2c`. Demonstrates that `session_id` alone is sufficient to read buffered messages.
 - `evidence/origin_null.headers`, `evidence/origin_null.body` — `Origin: null` reflected as `access-control-allow-origin: null` with credentials (HTTP-layer demonstration only; a `file://` page attack was not tested).
 - `evidence/browser_dom.txt`, `evidence/driveby_exfil.json`, `evidence/exfil_listener.log` — browser chain at 2026-11-20T15:39:14Z, headless Chromium 157, page origin `http://127.0.0.1:8000`, read `teycir-G5-KF5\n` from `http://127.0.0.1:18777`, POSTed 690 bytes to the collector on `:8899`.
-- `evidence/browser_dom_evil.txt`, `evidence/driveby_exfil_evil.json`, `evidence/exfil_listener_evil.log` — hardened re-run at 2026-11-20T15:46:36Z from non-loopback origin `http://evil.example:8000`. Exfil records `"origin":"http://evil.example:8000"` and `"parsed":"teycir-G5-KF5\n"`; 854 bytes received.
+- `evidence/browser_dom_evil.txt`, `evidence/driveby_exfil_evil.json`, `evidence/exfil_listener_evil.log` — hardened re-run at 2026-11-20T15:46:36Z from distinct cross-origin hostname `http://evil.example:8000` (mapped to loopback via `--host-resolver-rules`). Exfil records `"origin":"http://evil.example:8000"` and `"parsed":"teycir-G5-KF5\n"`; 854 bytes received.
+- `poc/exfil/20261120T161300Z-4.json` — raw collector record from the 2026-11-20T16:13:00Z browser run: `"origin":"http://evil.example:8000"`, `"target":"file:///etc/hostname"`, `"parsed":"teycir-G5-KF5\n"`, full API response body. Supporting run logs: `poc/exfil/dom.html`, `poc/exfil/listener.log`, `poc/exfil/web.log`, `poc/exfil/chrome.log`.
 - `evidence/add_allowlist_blocked.body` — control: with an allowlist configured, `/etc/hostname` is rejected (HTTP 415).
 - `evidence/search_allowed_canary.body` — control: a file inside the allowed root is parsed (`ALLOWED-CANARY-9d2f`).
 - `evidence/add_allowlist_symlink_etc.body`, `evidence/add_allowlist_symlink_out.body`, `evidence/add_allowlist_dotdot.body`, `evidence/add_allowlist_localhost.body` — guard controls: with an allowlist set, symlink to `/etc/hostname`, symlink outside the root, `..` traversal, and `file://localhost/...` are all rejected (HTTP 415). `Path.resolve(strict=True)` plus `is_relative_to` holds.
