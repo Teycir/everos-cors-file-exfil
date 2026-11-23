@@ -367,3 +367,24 @@ Reported privately to the vendor. No public disclosure until a fix is released o
 ---
 
 *Report generated 2026-11-20. Evidence captures are timestamped UTC; verify integrity with `sha256sums.txt`.*
+
+## 4.6 Fix verification — upstream `EverMind-AI/EverOS` HEAD `f476836` (2026-11-23 17:23 UTC)
+
+Cloned `https://github.com/EverMind-AI/EverOS.git` at HEAD `f476836`
+(commit `feat(memtrace): add smartcomment execution tracing (#612)`, past v1.7.1 release `f1fa762`).
+Inspected `src/everos/config/settings.py`, `src/everos/entrypoints/api/middleware/cors.py`,
+`src/everos/component/parser/input.py`.
+
+| Setting / file | Value at HEAD `f476836` | Fixed? |
+|---|---|---|
+| `file_uri_allow_dirs` default (`settings.py:610`) | `[]` — empty = allow any readable file | **NO** |
+| `DEFAULT_CORS_ORIGINS` (`cors.py`) | `["*"]` | **NO** |
+| `DEFAULT_CORS_ALLOW_CREDENTIALS` (`cors.py`) | `True` | **NO** |
+| `_validated_file_path` allowlist check (`input.py:105`) | `if allow and not any(...)` — empty allowlist skips the check | **NO** |
+| Any commit after v1.7.1 touching CORS / `file_uri` / `input.py` | None | **NO** |
+
+No commits between v1.7.1 (`f1fa762`) and HEAD (`f476836`) touch `cors.py`, `settings.py` CORS fields,
+or the `file_uri_allow_dirs` validation path. The latest tag is v1.7.1 — there is no v1.7.2 release.
+
+**Conclusion: F-01 remains fully exploitable.** No fix released, no CVE/GHSA assigned yet.
+
