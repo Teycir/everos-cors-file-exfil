@@ -43,12 +43,16 @@ AI-assisted=Yes, validated on production code=Yes, Shodan/Fofa=N/A, plan to publ
 - **Vulnerability title/details:** paste `details-EVEROS-2026-02.md`
 - **Already reported to supplier?** Yes — email to `evermind@shanda.com` on 2026-11-24T19:07:27Z (follow-up covering this finding; first vendor notice 2026-11-20T16:36:50Z). No acknowledgement received as of submission.
 - **Coordinate disclosure?** Same decision as Request 1 — vendor contacted, no response; recommend "Yes — VulnCheck handles vendor outreach" if you want them to run point, or "No" since you've already done direct outreach.
-- **Already publicly disclosed?** No — flip the report repo public at send time (currently PRIVATE; the details text links to it).
+- **Already publicly disclosed?** No — repo is public as of 2026-11-24; the details text links to it.
 
-## Request 3 — EVEROS-2026-03 (IDOR, Medium) — prepared, NOT yet submitted
+## Request 3 — EVEROS-2026-03 (IDOR, Medium) — READY TO SUBMIT
 
-- **Title:** Knowledge document IDOR — `doc_id`/`topic_id` operations ignore tenant scope
-- **Severity:** Medium, CVSS 3.1 6.8 `AV:N/AC:H/PR:N/UI:R/S:U/C:H/I:H/A:N` (9.1 if tenant-proxied)
-- **CWE:** CWE-639, CWE-862
-- **Details:** paste `details-EVEROS-2026-03.md`
-- **Gate:** vendor contact now made (same follow-up email as 02) — can be submitted on the same terms as Request 2 whenever you choose.
+Shared fields: same as Request 1/2 (Name Teycir, teycir@users.noreply.github.com, GitHub Teycir,
+vendor EverMind AI, product EverOS / https://github.com/EverMind-AI/EverOS,
+tested version `EverOS @ 6ac3898e7755dfc41002bfdc9704279009a82b81` (origin/main, v1.7.1 line),
+AI-assisted=Yes, validated on production code=Yes, Shodan/Fofa=N/A, plan to publish=Yes).
+
+- **Vulnerability title/details:** paste `details-EVEROS-2026-03.md`
+- **Already reported to supplier?** Yes — email to `evermind@shanda.com` on 2026-11-24T19:07:27Z (follow-up covering this finding; first vendor notice 2026-11-20T16:36:50Z). No acknowledgement received as of submission.
+- **Coordinate disclosure?** Same as Request 2 — recommend "Yes — VulnCheck handles vendor outreach".
+- **Already publicly disclosed?** No — repo is public as of 2026-11-24; the details text links to it.

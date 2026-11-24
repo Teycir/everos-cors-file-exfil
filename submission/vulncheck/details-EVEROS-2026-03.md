@@ -67,5 +67,5 @@ curl -X DELETE 'http://127.0.0.1:18777/api/v2/knowledge/documents/<doc_id>?app_i
 ## Disclosure status
 
 - Reporter: Teycir. LLM-assisted analysis/drafting; exploitation verified by the reporter against a live local build.
-- Vendor contact for this finding: _pending_.
+- Vendor contact: reported to `evermind@shanda.com` on 2026-11-24T19:07:27Z (follow-up covering this finding and EVEROS-2026-02; Message-ID and raw `.eml` in report repo `disclosure/contact-log.md` and `advisory/sent/`). No acknowledgement as of submission.
 - Related: EVEROS-2026-01 supplies browser reachability; this finding is a distinct authorization flaw.
