@@ -8,4 +8,5 @@
 | 2026-11-24 | Upstream re-check: HEAD `6ac3898` (24 commits past v1.7.1, latest tag still v1.7.1) — **no fix**; `file_uri_allow_dirs` still `[]`, CORS still `*`+credentials, no API auth |
 | ~2026-11-27 | Vendor acknowledgement window (5 business days per SECURITY.md) closes |
 | 2026-11-24 | **Submitted to VulnCheck** — case ID `31e5306f-1a5c-4489-b142-4097d39c9af9` |
+| 2026-11-24 | Vulners CNA submission drafted (`submission/vulners/email-to-cna.txt`) — pending send |
 | TBD | CVE/GHSA assignment — _pending_ |
