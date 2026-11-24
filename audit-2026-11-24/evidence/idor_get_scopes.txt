@@ -1,0 +1,11 @@
+== GET wrong scope tenantB ==
+{"request_id":"7dfc5342344c4f97bb7f98d976e0f6c9","data":{"doc_id":"d_0d264fe85a89","category_id":"Others","title":"Hardened IDOR Proof","summary":"stub summary","source_name":"docA2.md","source_type":null,"original_file_path":"/tmp/everos-poc-lab/tenantA/tenantA/knowledge/Others/Hardened_IDOR_Proof_d_0d264fe85a89/_original/docA2.md","topics":[],"created_at":"2026-11-24T18:34:58.773948Z","updated_at":"2026-11-24T18:34:58.773948Z"}}
+HTTP 200
+
+== GET no scope (default) ==
+{"request_id":"944be3bd9ace4f03b5d16cacbe3f14a1","data":{"doc_id":"d_0d264fe85a89","category_id":"Others","title":"Hardened IDOR Proof","summary":"stub summary","source_name":"docA2.md","source_type":null,"original_file_path":"/tmp/everos-poc-lab/tenantA/tenantA/knowledge/Others/Hardened_IDOR_Proof_d_0d264fe85a89/_original/docA2.md","topics":[],"created_at":"2026-11-24T18:34:58.773948Z","updated_at":"2026-11-24T18:34:58.773948Z"}}
+HTTP 200
+
+== GET right scope tenantA ==
+{"request_id":"da5caf2bde6c4e9dbf55ac712307fc03","data":{"doc_id":"d_0d264fe85a89","category_id":"Others","title":"Hardened IDOR Proof","summary":"stub summary","source_name":"docA2.md","source_type":null,"original_file_path":"/tmp/everos-poc-lab/tenantA/tenantA/knowledge/Others/Hardened_IDOR_Proof_d_0d264fe85a89/_original/docA2.md","topics":[],"created_at":"2026-11-24T18:34:58.773948Z","updated_at":"2026-11-24T18:34:58.773948Z"}}
+HTTP 200

@@ -1,0 +1,25 @@
+== POST /cascade/quiesce (no auth, no origin check) ==
+{"quiesced":true,"drained":0,"pending_before":0,"pending_after":0,"failed_permanent":0}
+HTTP 200
+
+== health cascade state ==
+{
+ "healthy": true,
+ "reasons": [],
+ "pending": 0,
+ "failed_permanent": 0,
+ "failed_retryable": 0,
+ "drain_consecutive_failures": 0,
+ "unrecoverable_total": 0,
+ "optimize_failure_streak": 0,
+ "prune_stale_seconds": 52.0,
+ "index_rows": {
+  "episode": 0,
+  "atomic_fact": 0,
+  "agent_case": 0,
+  "agent_skill": 0,
+  "user_profile": 0,
+  "knowledge_topic": 0
+ },
+ "index_emptied": true
+}

@@ -1,0 +1,9 @@
+== DELETE wrong scope tenantB ==
+
+HTTP 204
+
+== catalog row after delete ==
+d_0d264fe85a89|tenantA|tenantA|Hardened IDOR Proof
+== GET right scope after delete ==
+{"request_id":"ea2b6f9cca4a4e05a742964ec2183239","data":{"doc_id":"d_0d264fe85a89","category_id":"Others","title":"Hardened IDOR Proof","summary":"stub summary","source_name":"docA2.md","source_type":null,"original_file_path":null,"topics":[],"created_at":"2026-11-24T18:34:58.773948Z","updated_at":"2026-11-24T18:34:58.773948Z"}}
+HTTP 200

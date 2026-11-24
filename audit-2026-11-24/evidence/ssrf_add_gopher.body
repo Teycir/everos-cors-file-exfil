@@ -1,0 +1,1 @@
+{"request_id":"0cb1096bfd2345018bcb937f8f0c239b","error":{"code":"UNSUPPORTED_FORMAT","message":"RawFile has neither content nor an http(s) uri, so there is nothing to parse: pass the file bytes in content, or an http(s) uri for the URL parser to fetch","timestamp":"2026-11-24T18:31:40.290404+00:00","path":"/api/v2/memory/add"}}

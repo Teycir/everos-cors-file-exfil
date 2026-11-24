@@ -1,0 +1,13 @@
+== list_documents tenantB (scoped list — should NOT contain doc) ==
+{
+    "request_id": "90470cff99e1455584d2ec904d711a01",
+    "data": {
+        "documents": [],
+        "total": 0,
+        "page": 1,
+        "page_size": 20
+    }
+}
+
+== list_documents tenantA ==
+['d_0d264fe85a89']

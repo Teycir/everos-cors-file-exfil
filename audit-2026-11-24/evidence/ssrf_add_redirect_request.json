@@ -1,0 +1,1 @@
+{"session_id":"ssrf-hard-1795545100","messages":[{"sender_id":"u1","role":"user","timestamp":1795545100242,"content":[{"type":"html","uri":"http://127.0.0.1:18098/redir"}]}],"defer_extraction":true}

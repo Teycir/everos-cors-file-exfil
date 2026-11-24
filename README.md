@@ -48,10 +48,24 @@ No commits between v1.7.1 (`f1fa762`) and HEAD (`6ac3898`) touch `cors.py`, the 
 
 **Conclusion: F-01 remains fully exploitable at HEAD `6ac3898`.** No fix released, no CVE/GHSA assigned yet.
 
+## Additional findings — audit 2026-11-24
+
+A second pass over upstream HEAD `6ac3898` (3 parallel hunters + live PoC verification) found further issues, all verified against a running instance — see **`audit-2026-11-24/`** (report + evidence + PoCs + `SHA256SUMS`):
+
+| ID | Finding | Severity | Status |
+|---|---|---|---|
+| V-01 | Unauthenticated SSRF via `uri` content items (everalgo fetches http(s) with no private-IP policy; response readable via `/search`; redirects followed) | High (~CVSS 7.5) | verified ×3 paths |
+| V-02 | Knowledge document IDOR — `doc_id`/`topic_id` ops ignore `app_id`/`project_id`; cross-scope read + delete | Medium-High | verified |
+| V-03 | Missing Origin validation on all mutating routes (only `/purge` checks) — CSRF write/delete | Medium | code-verified |
+| V-04 | Unauthenticated `POST /cascade/quiesce` → permanent indexing DoS until restart | Medium-Low | verified |
+| V-05 | Absolute server paths in `original_file_path` responses | Low | verified |
+
+V-01 and V-02 are distinct root causes from F-01 (missing URI egress policy; missing tenant authorization) and are candidates for separate CVE submissions.
+
 ## Affected
 
 - EverOS 1.7.1 (commit `e5778edb4cbac71e359ea375f38cf805aae32b0c`), default configuration
-- Current main HEAD `f476836` — unfixed
+- Current main HEAD `6ac3898` — unfixed
 - Configuration: HTTP API enabled, `[multimodal]` parser configured (required for `file://` hydration)
 
 ## Proven chain (low-privilege, no authentication)
