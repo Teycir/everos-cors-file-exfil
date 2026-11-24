@@ -34,7 +34,7 @@ report-repo URL, suggested remediation, and the disclosure timeline.
 ## Request 2 — EVEROS-2026-02 (prepared, NOT yet submitted)
 
 - **Title:** Unauthenticated server-side request forgery via `uri` content items, with response readback
-- **Severity:** High, CVSS 3.1 7.5 `AV:N/AC:L/PR:N/UI:R/S:C/C:H/I:N/A:N`
+- **Severity:** High, CVSS 3.1 7.4 `AV:N/AC:L/PR:N/UI:R/S:C/C:H/I:N/A:N` (8.6 if `UI:N`)
 - **CWE:** CWE-918
 - **Details:** paste `details-EVEROS-2026-02.md`
 - **Gate:** vendor has NOT been contacted about this finding yet — send vendor addendum first, respect the acknowledgement window before VulnCheck submission.
@@ -42,7 +42,7 @@ report-repo URL, suggested remediation, and the disclosure timeline.
 ## Request 3 — EVEROS-2026-03 (prepared, NOT yet submitted)
 
 - **Title:** Knowledge document IDOR — `doc_id`/`topic_id` operations ignore tenant scope
-- **Severity:** Medium-High, CVSS 3.1 7.1 `AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:N`
+- **Severity:** Medium, CVSS 3.1 6.8 `AV:N/AC:H/PR:N/UI:R/S:U/C:H/I:H/A:N` (9.1 if tenant-proxied)
 - **CWE:** CWE-639, CWE-862
 - **Details:** paste `details-EVEROS-2026-03.md`
 - **Gate:** same as above — vendor contact pending.

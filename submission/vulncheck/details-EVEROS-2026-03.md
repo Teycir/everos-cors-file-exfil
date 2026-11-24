@@ -2,8 +2,10 @@
 
 ## Severity
 
-- **Medium-High** — CVSS 3.1 **7.1** — `AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:N` when a proxy maps tenants to `app_id`/`project_id`; in the default no-auth localhost model the practical severity is bounded by doc-id entropy (48-bit, unguessable but leakable).
-  - Calculator: https://www.first.org/cvss/calculator/3.1#CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:N
+- **Medium** — CVSS 3.1 **6.8** — `AV:N/AC:H/PR:N/UI:R/S:U/C:H/I:H/A:N`
+  - Calculator: https://www.first.org/cvss/calculator/3.1#CVSS:3.1/AV:N/AC:H/PR:N/UI:R/S:U/C:H/I:H/A:N
+  - `AC:H` because exploitation requires knowing a `doc_id` (48-bit, unguessable but leakable via search hits, logs, URLs). `UI:R` because the practical remote path is a victim's browser (CORS defect, EVEROS-2026-01).
+  - **Alternate scenarios:** `AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:N` = **9.1** (Critical) if a reverse proxy maps tenants to `app_id`/`project_id` and doc IDs are known/enumerable; `AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:H/A:N` = **7.4** for a purely local attacker.
 - **CWE:** CWE-639 (Authorization Bypass Through User-Controlled Key), CWE-862 (Missing Authorization)
 
 ## Affected product

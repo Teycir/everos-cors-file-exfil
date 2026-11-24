@@ -2,8 +2,9 @@
 
 ## Severity
 
-- **High** — CVSS 3.1 **7.5** — `AV:N/AC:L/PR:N/UI:R/S:C/C:H/I:N/A:N`
+- **High** — CVSS 3.1 **7.4** — `AV:N/AC:L/PR:N/UI:R/S:C/C:H/I:N/A:N`
   - Calculator: https://www.first.org/cvss/calculator/3.1#CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:C/C:H/I:N/A:N
+  - If the API is bound to a non-loopback interface (`UI:N`), the same vector scores **8.6**.
   - `UI:R` because the practical remote path is a victim's browser (same reachability mechanism as EVEROS-2026-01); score rises if the API is bound to a non-loopback interface.
 - **CWE:** CWE-918 (Server-Side Request Forgery)
 
