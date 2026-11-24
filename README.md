@@ -30,20 +30,22 @@ Any website a victim visits can read arbitrary local files (up to 50 MB/item) th
 ## Fix verification — upstream `EverMind-AI/EverOS`
 
 Cloned `https://github.com/EverMind-AI/EverOS.git` at HEAD `f476836` (commit `feat(memtrace): add smartcomment execution tracing (#612)`, past v1.7.1 release `f1fa762`).
+Re-verified 2026-11-24 at HEAD `6ac3898` (24 commits past v1.7.1, still no new tag).
 Inspected `src/everos/config/settings.py`, `src/everos/entrypoints/api/middleware/cors.py`, `src/everos/component/parser/input.py`.
 
-| Setting / file | Value at HEAD `f476836` | Fixed? |
-|---|---|---|
-| `file_uri_allow_dirs` default (`settings.py:610`) | `[]` — empty = allow any readable file | **NO** |
-| `file_uri_max_bytes` (`settings.py`) | `50 * 1024 * 1024` | N/A (size cap, not the issue) |
-| `DEFAULT_CORS_ORIGINS` (`cors.py`) | `["*"]` | **NO** |
-| `DEFAULT_CORS_ALLOW_CREDENTIALS` (`cors.py`) | `True` | **NO** |
-| `_validated_file_path` allowlist check (`input.py`) | `if allow and not any(...)` — empty allowlist skips the check | **NO** |
-| Any commit after v1.7.1 touching CORS / `file_uri` / `input.py` | None | **NO** |
+| Setting / file | Value at HEAD `f476836` | Value at HEAD `6ac3898` (2026-11-24) | Fixed? |
+|---|---|---|---|
+| `file_uri_allow_dirs` default (`settings.py:610`) | `[]` — empty = allow any readable file | `[]` — unchanged | **NO** |
+| `file_uri_max_bytes` (`settings.py`) | `50 * 1024 * 1024` | `50 * 1024 * 1024` | N/A (size cap, not the issue) |
+| `DEFAULT_CORS_ORIGINS` (`cors.py`) | `["*"]` | `["*"]` — file untouched since v1.7.1 | **NO** |
+| `DEFAULT_CORS_ALLOW_CREDENTIALS` (`cors.py`) | `True` | `True` | **NO** |
+| `_validated_file_path` allowlist check (`input.py:106`) | `if allow and not any(...)` — empty allowlist skips the check | identical — `input.py` has zero diff since v1.7.1 | **NO** |
+| Any authentication on API routes | none | none — no auth dependency anywhere in `entrypoints/api` | **NO** |
+| Any commit after v1.7.1 touching CORS / `file_uri` / `input.py` | None | None (24 commits; `settings.py` churn is unrelated features) | **NO** |
 
-No commits between v1.7.1 (`f1fa762`) and HEAD (`f476836`) touch `cors.py`, `settings.py` CORS fields, or the `file_uri_allow_dirs` validation path. The latest tag is v1.7.1 — there is no v1.7.2.
+No commits between v1.7.1 (`f1fa762`) and HEAD (`6ac3898`) touch `cors.py`, the `file_uri_allow_dirs` validation path, or `input.py`. The latest tag is still v1.7.1 — there is no v1.7.2.
 
-**Conclusion: F-01 remains fully exploitable.** No fix released, no CVE/GHSA assigned yet.
+**Conclusion: F-01 remains fully exploitable at HEAD `6ac3898`.** No fix released, no CVE/GHSA assigned yet.
 
 ## Affected
 

@@ -1,0 +1,32 @@
+To: disclosure@vulncheck.com
+Subject: CVE request — EverOS: unauthenticated websites can exfiltrate arbitrary local files via file:// ingestion and permissive CORS (High, CVSS 8.2)
+
+Vendor: EverMind AI
+Product: EverOS — local agent-memory service, HTTP API (Python/FastAPI), https://github.com/EverMind-AI/EverOS
+Tested version: EverOS 1.7.1, commit e5778edb4cbac71e359ea375f38cf805aae32b0c; re-verified unfixed at main HEAD 6ac3898 (2026-11-24)
+
+Finding EVEROS-2026-01 (single finding):
+
+Severity: High — CVSS 3.1 8.2 (AV:N/AC:L/PR:N/UI:R/S:C/C:H/I:L/A:N)
+CWE: CWE-73, CWE-942, CWE-306 (contributing)
+Title: Unauthenticated websites can exfiltrate arbitrary local files through the EverOS API
+
+Summary: EverOS's unauthenticated FastAPI memory API combines two insecure
+defaults — file_uri_allow_dirs=[] treats an empty allowlist as "allow any
+readable file" for file:// ingestion, and CORS defaults to allow_origins=["*"]
+with allow_credentials=True. Any website a victim visits can read arbitrary
+local files (≤50 MB/item) via POST /api/v2/memory/add + /memory/search and
+write attacker-chosen memories. Demonstrated end-to-end in headless Chromium
+from a cross-origin hostname.
+
+Reproduction package (report + evidence + runnable PoC):
+https://github.com/Teycir/everos-cors-file-exfil
+
+Disclosure timeline:
+- 2026-11-20T16:36:50Z — reported privately to vendor at evermind@shanda.com
+  (the channel designated in the project's SECURITY.md) with the full evidence
+  archive. Vendor commits to acknowledgement within 5 business days.
+- 2026-11-24 — re-verified unfixed at upstream HEAD 6ac3898.
+
+AI involvement: LLM assistant used for source analysis and drafting; reporter
+executed and verified the PoC end-to-end. Reporter: Teycir.

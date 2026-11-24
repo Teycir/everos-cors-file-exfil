@@ -1,0 +1,122 @@
+{
+  "dataType": "CVE_RECORD",
+  "dataVersion": "5.1",
+  "cveMetadata": {
+    "cveId": "CVE-2026-XXXXX",
+    "assignerOrgId": "00000000-0000-4000-8000-000000000000",
+    "state": "PUBLISHED",
+    "assignerShortName": "VulnCheck",
+    "dateReserved": "2026-11-24T00:00:00.000Z",
+    "datePublished": "2026-11-24T00:00:00.000Z",
+    "dateUpdated": "2026-11-24T00:00:00.000Z"
+  },
+  "containers": {
+    "cna": {
+      "providerMetadata": {
+        "orgId": "00000000-0000-4000-8000-000000000000",
+        "shortName": "VulnCheck"
+      },
+      "title": "[EVEROS-2026-01] EverOS: unauthenticated websites can exfiltrate arbitrary local files via file:// ingestion and permissive CORS",
+      "descriptions": [
+        {
+          "lang": "en",
+          "value": "EverOS 1.7.1 (EverMind-AI/EverOS) is a local-first agent-memory service whose FastAPI HTTP API has no authentication by documented design. Two insecure defaults combine into browser-mediated local file disclosure. (A) POST /api/v2/memory/add accepts a content item with uri file:///...; with the default file_uri_allow_dirs=[] the empty allowlist is treated as allow-any-readable-file, so the file is read by the EverOS process, parsed, and stored as parsed_content, which POST /api/v2/memory/search returns verbatim (50 MB cap per item). (B) CORS defaults are allow_origins=[\"*\"] with allow_credentials=True; Starlette reflects the request Origin and returns Access-Control-Allow-Credentials: true. Any website a victim visits can therefore issue cross-origin requests to the loopback API, ingest arbitrary local files, and read them back — no credentials, cookies, or prompt required. Demonstrated end-to-end in headless Chromium from a distinct cross-origin hostname; attacker-chosen memories can also be written (context poisoning). Re-verified unfixed at upstream main HEAD 6ac3898 (2026-11-24)."
+        }
+      ],
+      "affected": [
+        {
+          "vendor": "EverMind AI",
+          "product": "EverOS",
+          "repo": "https://github.com/EverMind-AI/EverOS",
+          "versions": [
+            {
+              "version": "1.7.1",
+              "status": "affected",
+              "versionType": "semver"
+            },
+            {
+              "version": "<= 6ac3898e7755dfc41002bfdc9704279009a82b81",
+              "status": "affected",
+              "versionType": "git"
+            }
+          ],
+          "defaultStatus": "unaffected"
+        }
+      ],
+      "problemTypes": [
+        {
+          "descriptions": [
+            {
+              "lang": "en",
+              "type": "CWE",
+              "cweId": "CWE-73",
+              "description": "External Control of File Name or Path"
+            },
+            {
+              "lang": "en",
+              "type": "CWE",
+              "cweId": "CWE-942",
+              "description": "Permissive Cross-domain Policy with Untrusted Domains"
+            },
+            {
+              "lang": "en",
+              "type": "CWE",
+              "cweId": "CWE-306",
+              "description": "Missing Authentication for Critical Function (contributing)"
+            }
+          ]
+        }
+      ],
+      "metrics": [
+        {
+          "cvssV3_1": {
+            "version": "3.1",
+            "baseScore": 8.2,
+            "baseSeverity": "HIGH",
+            "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:C/C:H/I:L/A:N"
+          }
+        }
+      ],
+      "credits": [
+        {
+          "lang": "en",
+          "type": "finder",
+          "value": "Teycir"
+        }
+      ],
+      "references": [
+        {
+          "url": "https://github.com/EverMind-AI/EverOS",
+          "name": "EverOS repository"
+        },
+        {
+          "url": "https://github.com/EverMind-AI/EverOS/commit/e5778edb4cbac71e359ea375f38cf805aae32b0c",
+          "name": "tested commit (v1.7.1)"
+        },
+        {
+          "url": "https://github.com/Teycir/everos-cors-file-exfil",
+          "name": "public report + PoC repository"
+        },
+        {
+          "url": "https://cwe.mitre.org/data/definitions/942.html",
+          "name": "CWE-942"
+        }
+      ],
+      "timeline": [
+        {
+          "time": "2026-11-20T16:36:50.000Z",
+          "lang": "en",
+          "value": "Reported to vendor via email to evermind@shanda.com (SECURITY.md channel) with full evidence archive"
+        },
+        {
+          "time": "2026-11-24T00:00:00.000Z",
+          "lang": "en",
+          "value": "Re-verified unfixed at upstream main HEAD 6ac3898"
+        }
+      ],
+      "source": {
+        "discovery": "EXTERNAL"
+      }
+    }
+  }
+}
