@@ -11,6 +11,8 @@ Channel: email per `SECURITY.md` — private vulnerability reporting is NOT enab
 | 4 | EverMind AI (EverOS maintainers) | evermind@shanda.com | Follow-up: no ack received on #1; adds EVEROS-2026-02 (SSRF) + EVEROS-2026-03 (IDOR) | sent | 2026-11-24T19:07:27Z | Message-ID `<R9tdEAIZAtL3T4AOQc6xaz3bOjtzzWASmx1kP3P7i7efcR0t4viAniWNOeQj8szZbY4x9NVNoNIG0barH7AN43xFB_G_UFSGjJDjaIEa0-4=@protonmail.com>`; sha256 `1c526550…`; raw copy `advisory/sent/20261124T190727Z-vendor-followup-everos.eml`; body source `advisory/2026-11-24-vendor-addendum-everos.md` |
 | 5 | VulnCheck | web form | CVE assignment request (EVEROS-2026-02 SSRF) | submitted | 2026-11-24 | Case ID `49f5469c-f397-4415-991a-64383446ec2b`; details `submission/vulncheck/details-EVEROS-2026-02.md` |
 | 6 | VulnCheck | web form | CVE assignment request (EVEROS-2026-03 IDOR) | submitted | 2026-11-24 | Case ID `e8eefb98-f949-40e3-945f-33ca00a0eb6f`; details `submission/vulncheck/details-EVEROS-2026-03.md` |
+| 7 | Vulners (CNA) | cna@vulners.com | CVE ID request (EVEROS-2026-02 SSRF, High 7.4) | sent | 2026-11-24T19:33:56Z | Message-ID `<07aht_0gSeaA0xdRrT4mYDYGNXlwJK0a5Tc4Iz2D3gJpuv7QEPtYtBIIwuVnqbtWwDj1oo6Q1vSMkuXx2v5LwyITBq8p7Z_EAL2vV2Vs5BU=@protonmail.com>`; sha256 `4d7c1087…`; raw copy `submission/vulners/sent/20261124T193356Z-cna-vulners-everos-2026-02.eml` |
+| 8 | Vulners (CNA) | cna@vulners.com | CVE ID request (EVEROS-2026-03 IDOR, Medium 6.8) | sent | 2026-11-24T19:37:44Z | Message-ID `<uLHlSTwbapj0DVfdYfCT8Biz9hDQVyIUTZPYkN1TOYEOAf1cfRss0Vixccxu7pkbcq255v8_6lmZLR2_oNWsx2UTpEyscd2Ev_VzBRSjY10=@protonmail.com>`; sha256 `dada4902…`; raw copy `submission/vulners/sent/20261124T193744Z-cna-vulners-everos-2026-03.eml` |
 
 ## Sent package
 
