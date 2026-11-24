@@ -45,7 +45,9 @@ AI-assisted=Yes, validated on production code=Yes, Shodan/Fofa=N/A, plan to publ
 - **Coordinate disclosure?** Same decision as Request 1 — vendor contacted, no response; recommend "Yes — VulnCheck handles vendor outreach" if you want them to run point, or "No" since you've already done direct outreach.
 - **Already publicly disclosed?** No — repo is public as of 2026-11-24; the details text links to it.
 
-## Request 3 — EVEROS-2026-03 (IDOR, Medium) — READY TO SUBMIT
+## Request 3 — EVEROS-2026-03 (IDOR, Medium) — **SUBMITTED 2026-11-24**
+
+**VulnCheck case ID: `e8eefb98-f949-40e3-945f-33ca00a0eb6f`**
 
 Shared fields: same as Request 1/2 (Name Teycir, teycir@users.noreply.github.com, GitHub Teycir,
 vendor EverMind AI, product EverOS / https://github.com/EverMind-AI/EverOS,

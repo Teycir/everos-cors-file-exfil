@@ -70,5 +70,6 @@ curl -s -X POST http://127.0.0.1:18777/api/v2/memory/search \
 ## Disclosure status
 
 - Reporter: Teycir. LLM-assisted analysis/drafting; all exploitation executed and verified by the reporter against a live local build.
+- VulnCheck case ID: `49f5469c-f397-4415-991a-64383446ec2b` (submitted 2026-11-24).
 - Vendor contact: reported to `evermind@shanda.com` on 2026-11-24T19:07:27Z (follow-up covering this finding and EVEROS-2026-03; Message-ID and raw `.eml` in report repo `disclosure/contact-log.md` and `advisory/sent/`). No acknowledgement as of submission.
 - Related: EVEROS-2026-01 (CORS + `file://` exfil) is the delivery mechanism that makes this reachable from a browser; the SSRF itself is a distinct root cause (missing egress policy).

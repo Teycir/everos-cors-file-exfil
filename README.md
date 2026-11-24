@@ -10,7 +10,7 @@ All findings verified against a live instance at upstream HEAD `6ac3898` (unfixe
 |---|---|---|---|---|
 | **2026-01** | **Local file exfiltration via `file://` ingestion + permissive CORS** — any website reads arbitrary local files (≤50 MB/item) through the unauthenticated API | **High** | 8.2 `AV:N/AC:L/PR:N/UI:R/S:C/C:H/I:L/A:N` | Submitted — VulnCheck `31e5306f…`, Vulners CNA emailed |
 | **2026-02** | **Unauthenticated SSRF** — `uri` content items fetch arbitrary http(s) URLs server-side (redirects followed, no private-IP filtering); response readable via `/memory/search` | **High** | 7.4 `AV:N/AC:L/PR:N/UI:R/S:C/C:H/I:N/A:N` (8.6 if `UI:N`) | Submitted — VulnCheck `49f5469c…` |
-| **2026-03** | **Knowledge document IDOR** — `doc_id`/`topic_id` operations ignore `app_id`/`project_id` scope; cross-tenant read and delete | **Medium** | 6.8 `AV:N/AC:H/PR:N/UI:R/S:U/C:H/I:H/A:N` (9.1 if tenant-proxied) | Verified — draft ready, pending vendor contact |
+| **2026-03** | **Knowledge document IDOR** — `doc_id`/`topic_id` operations ignore `app_id`/`project_id` scope; cross-tenant read and delete | **Medium** | 6.8 `AV:N/AC:H/PR:N/UI:R/S:U/C:H/I:H/A:N` (9.1 if tenant-proxied) | Submitted — VulnCheck `e8eefb98…` |
 | — | Missing `Origin` validation on mutating routes (CSRF write/delete) | Medium | 6.1 | Hardening note |
 | — | Unauthenticated `POST /cascade/quiesce` → permanent indexing DoS until restart | Med-Low | 6.5 | Hardening note |
 | — | Absolute server paths leaked in `original_file_path` responses | Low | 5.3 | Hardening note |
@@ -98,4 +98,4 @@ Verified: wrong-scope `GET` → 200, wrong-scope `DELETE` → 204. CWE-639, CWE-
 |---|---|
 | 2026-11-20 | Vendor notice → `evermind@shanda.com` (evidence zip `fd739c25…`) |
 | 2026-11-23/24 | Re-verified unfixed at HEAD `6ac3898` |
-| 2026-11-24 | VulnCheck submitted — F-01 `31e5306f…`, SSRF `49f5469c…` · Vulners CNA emailed · vendor follow-up sent (no ack) · repo public |
+| 2026-11-24 | VulnCheck submitted — F-01 `31e5306f…`, SSRF `49f5469c…`, IDOR `e8eefb98…` · Vulners CNA emailed (F-01) · vendor follow-up sent (no ack) · repo public |
