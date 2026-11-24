@@ -9,4 +9,6 @@
 | ~2026-11-27 | Vendor acknowledgement window (5 business days per SECURITY.md) closes |
 | 2026-11-24 | **Submitted to VulnCheck** — case ID `31e5306f-1a5c-4489-b142-4097d39c9af9` |
 | 2026-11-24T18:07:23Z | **Sent to Vulners CNA** (`cna@vulners.com`) — same body as VulnCheck submission. Message-ID `<WBeFwALsQ4y2S6GY2DqvKRIhJOprRs5nKeIVIQLPnmIj-VJ10NqTF7A3S7m_5i0J7Jlsu5ZcwQAOkuDoHGIzgcRWtVu6sfTAh-yWo3yEGkw=@protonmail.com>`; raw copy `../vulners/sent/20261124T180723Z-cna-vulners.eml` (sha256 `7ed1d776…`) |
-| TBD | CVE/GHSA assignment — _pending_ |
+| 2026-11-24T19:07:27Z | Vendor follow-up sent to `evermind@shanda.com` — no ack on first notice; adds EVEROS-2026-02 (SSRF) + EVEROS-2026-03 (IDOR). Message-ID `<R9tdEAIZAtL3T4AOQc6xaz3bOjtzzWASmx1kP3P7i7efcR0t4viAniWNOeQj8szZbY4x9NVNoNIG0barH7AN43xFB_G_UFSGjJDjaIEa0-4=@protonmail.com>`; raw copy `../../advisory/sent/20261124T190727Z-vendor-followup-everos.eml` (sha256 `1c526550…`) |
+| 2026-11-24 | **EVEROS-2026-02 (SSRF) submitted to VulnCheck** — case ID `49f5469c-f397-4415-991a-64383446ec2b` |
+| TBD | CVE/GHSA assignment — _pending_ (F-01: `31e5306f…`; SSRF: `49f5469c…`) |

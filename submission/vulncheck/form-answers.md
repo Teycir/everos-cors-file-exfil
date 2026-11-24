@@ -31,7 +31,9 @@ It already contains: severity + CVSS 3.1 vector (8.2) + calculator link, CWE IDs
 affected product/versions, summary, attack path, impact, repro steps, the public
 report-repo URL, suggested remediation, and the disclosure timeline.
 
-## Request 2 — EVEROS-2026-02 (SSRF, High) — READY TO SUBMIT
+## Request 2 — EVEROS-2026-02 (SSRF, High) — **SUBMITTED 2026-11-24**
+
+**VulnCheck case ID: `49f5469c-f397-4415-991a-64383446ec2b`**
 
 Shared fields: same as Request 1 (Name Teycir, teycir@users.noreply.github.com, GitHub Teycir,
 vendor EverMind AI, product EverOS / https://github.com/EverMind-AI/EverOS,
