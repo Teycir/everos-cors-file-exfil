@@ -26,6 +26,7 @@ Any website a victim visits can read arbitrary local files (up to 50 MB/item) th
 | 2026-11-20 16:36 | Vendor notice sent to `evermind@shanda.com` with evidence zip (`fd739c25…`) |
 | 2026-11-20 16:36 | This repo made public (report + evidence + PoC) |
 | 2026-11-23 17:23 | Upstream re-checked: cloned `EverMind-AI/EverOS` at HEAD `f476836`; **no fix** for F-01 |
+| 2026-11-24 | Re-verified at HEAD `6ac3898`: **no fix**. Submitted to VulnCheck — case `31e5306f-1a5c-4489-b142-4097d39c9af9` (see `submission/vulncheck/`) |
 
 ## Fix verification — upstream `EverMind-AI/EverOS`
 
