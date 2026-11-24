@@ -1,10 +1,14 @@
 To: cna@vulners.com
-Subject: CVE request — EverOS: unauthenticated websites can exfiltrate arbitrary local files via file:// ingestion and permissive CORS (High, CVSS 8.2)
+Subject: CVE ID request — EverOS: unauthenticated websites can exfiltrate arbitrary local files via file:// ingestion and permissive CORS (High, CVSS 8.2)
 
 Vendor Name: EverMind AI
 Product Name: EverOS — local agent-memory service, HTTP API (Python/FastAPI); repository https://github.com/EverMind-AI/EverOS
 Affected Versions: EverOS 1.7.1 (commit e5778edb4cbac71e359ea375f38cf805aae32b0c); re-verified unfixed at main HEAD 6ac3898e7755dfc41002bfdc9704279009a82b81 (2026-11-24)
 Vulnerability Class (CWE): CWE-73 (External Control of File Name or Path), CWE-942 (Permissive Cross-domain Policy), CWE-306 (Missing Authentication for Critical Function, contributing)
+
+Request: we are asking only for CVE ID assignment. Vendor coordination and
+disclosure are already handled by us — please do not initiate vendor contact
+or publication on our behalf.
 
 Title: Unauthenticated websites can exfiltrate arbitrary local files through the EverOS API
 
@@ -40,28 +44,20 @@ Impact: arbitrary local file read (credentials, SSH keys, browser profiles,
 documents) exfiltrated via the victim's browser; integrity impact via memory
 injection. OS file permissions still apply.
 
-Steps to reproduce and full evidence (request/response captures, negative
-controls, runnable browser PoC):
+Technical details, steps to reproduce, evidence captures, and runnable PoC:
 https://github.com/Teycir/everos-cors-file-exfil
 (report.md, evidence/, poc/)
 
-Suggested remediation:
-- Default file_uri_allow_dirs to deny-all when unset; require explicit opt-in
-  directories; resolve symlinks before the check.
-- Default CORS to no origins and allow_credentials=False.
-- Add per-instance bearer-token authentication for all API routes.
-- Do not return parsed_content in search/list DTOs.
-
-Disclosure timeline:
+Prior coordination (already done by reporter):
 - 2026-11-20T16:36:50Z — reported privately to the vendor at
   evermind@shanda.com (the channel designated in the project's SECURITY.md)
   with the full report + evidence archive. Vendor commits to acknowledgement
   within 5 business days and to fixing before public disclosure.
 - 2026-11-24 — re-verified unfixed at upstream HEAD 6ac3898.
-- 2026-11-24 — also submitted to VulnCheck (case 31e5306f-1a5c-4489-b142-4097d39c9af9).
-
-Note on CNA scope: if you consider this within VulnCheck's scope as a CNA,
-please defer to that assignment; otherwise we request Vulners assign a CVE.
+- 2026-11-24 — also submitted to VulnCheck for CVE assignment
+  (case 31e5306f-1a5c-4489-b142-4097d39c9af9). If you consider this within
+  VulnCheck's CNA scope, please defer to that assignment; otherwise we
+  request Vulners assign a CVE ID only.
 
 Reporter: Teycir. Analysis and report drafting were LLM-assisted; all
 exploitation was executed and verified by the reporter against a live local
