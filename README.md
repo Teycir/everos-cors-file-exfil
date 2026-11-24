@@ -1,88 +1,78 @@
-# EverOS CORS / `file://` Local File Exfiltration (F-01)
+# EverOS — Local File Exfiltration via `file://` + Permissive CORS
 
-EverOS 1.7.1 (Python/FastAPI) combines two insecure defaults into browser-mediated local file disclosure:
-- **Root cause A** — `file_uri_allow_dirs` defaults to `[]`, which the code treats as "allow any readable file".
-- **Root cause B** — CORS defaults to `allow_origins=["*"]` + `allow_credentials=True` on an unauthenticated API.
+**Any website can read arbitrary local files from a machine running EverOS — no authentication, no user interaction beyond visiting a page.**
 
-Any website a victim visits can read arbitrary local files (up to 50 MB/item) through `POST /api/v2/memory/add` + `POST /api/v2/memory/search`, and write attacker-chosen memories. Demonstrated end-to-end in headless Chromium from a cross-origin hostname mapped to loopback.
+Two insecure defaults combine into browser-mediated local file disclosure in EverOS 1.7.1 (Python/FastAPI, `EverMind-AI/EverOS`):
 
-## Report metadata
+1. **`file://` ingestion is unrestricted.** `file_uri_allow_dirs` defaults to `[]`, which the code treats as "allow any readable file" (up to 50 MB/item).
+2. **CORS allows everything.** The unauthenticated API defaults to `allow_origins=["*"]` + `allow_credentials=True`.
 
-| Field | Value |
+A victim's browser ingests `file:///etc/hostname` via `POST /api/v2/memory/add`, then reads the parsed content back via `POST /api/v2/memory/search` — all cross-origin. Demonstrated end-to-end in headless Chromium.
+
+| | |
 |---|---|
-| Target | EverOS 1.7.1 (`EverMind-AI/EverOS`), commit `e5778edb4cbac71e359ea375f38cf805aae32b0c` |
-| Severity | High — CVSS 3.1 8.2 (`AV:N/AC:L/PR:N/UI:R/S:C/C:H/I:L/A:N`) |
-| CWE | CWE-73, CWE-942, CWE-306 (contributing) |
-| Advisory | none assigned yet — reported privately to `evermind@shanda.com` 2026-11-20 |
-| Repo | `https://github.com/Teycir/everos-cors-file-exfil` (this repo) |
-| Full report | `report.md` |
-| PoC | `poc/` |
+| **Severity** | High — CVSS 3.1 **8.2** `AV:N/AC:L/PR:N/UI:R/S:C/C:H/I:L/A:N` |
+| **CWE** | CWE-73, CWE-942, CWE-306 (contributing) |
+| **Affected** | EverOS 1.7.1 `e5778ed` … main HEAD `6ac3898` — **unfixed** |
+| **Prerequisite** | `[multimodal]` parser configured; victim visits attacker page |
+| **Disclosure** | Vendor notified 2026-11-20 · VulnCheck `31e5306f-1a5c-4489-b142-4097d39c9af9` · Vulners CNA emailed 2026-11-24 |
+| **Reporter** | Teycir — analysis LLM-assisted, PoC executed and verified manually |
+
+## Findings index
+
+| ID | Finding | CVSS | Status |
+|---|---|---|---|
+| **2026-01** | This report — file:// exfiltration via CORS | **8.2** | Submitted (VulnCheck + Vulners) |
+| 2026-02 | Unauthenticated SSRF via `uri` items | 7.4 | Draft ready, pending vendor contact |
+| 2026-03 | Knowledge doc IDOR — tenant scope ignored | 6.8 | Draft ready, pending vendor contact |
+
+Full audit: [`audit-2026-11-24/`](audit-2026-11-24/report.md) — report, evidence, PoCs, `SHA256SUMS`.
+Submission drafts: [`submission/`](submission/).
+
+## Reproduce in 30 seconds
+
+```bash
+# 1. Victim's browser-equivalent requests (cross-origin headers shown)
+curl -X POST http://127.0.0.1:18777/api/v2/memory/add \
+  -H 'Content-Type: application/json' -H 'Origin: https://evil.example' \
+  -d '{"session_id":"poc","messages":[{"sender_id":"u1","role":"user","timestamp":1,"content":[{"type":"doc","name":"h.txt","uri":"file:///etc/hostname","ext":"txt"}]}],"defer_extraction":true}'
+
+curl -X POST http://127.0.0.1:18777/api/v2/memory/search \
+  -H 'Content-Type: application/json' -H 'Origin: https://evil.example' \
+  -d '{"session_id":"poc","user_id":"attacker","query":"hostname"}'
+# → data.unprocessed_messages[0].content[0].parsed_content == "<hostname>\n"
+```
+
+Browser drive-by PoC: [`poc/`](poc/) — `driveby.html`, `exfil_listener.py`, `browser_driveby.sh`.
+Full write-up with captures and negative controls: [`report.md`](report.md).
+
+## Why it works
+
+```
+attacker page ──CORS * + credentials──▶ EverOS API (no auth)
+                                          │ file:///etc/passwd
+                                          ▼
+                                    parsed_content ──▶ /memory/search ──▶ attacker
+```
+
+- CORS middleware reflects any `Origin` and returns `Access-Control-Allow-Credentials: true`.
+- `input.py` skips the allowlist check entirely when `file_uri_allow_dirs` is empty.
+- Search does not bind `session_id` to `user_id` — the session ID is the only access control.
+
+Negative controls verified: allowlist configured → symlink escape, `..` traversal, `file://localhost/` all rejected; unreadable files (`/etc/shadow`) error without leaking content.
+
+## Remediation
+
+- Default `file_uri_allow_dirs` to deny-all when unset; resolve symlinks before the check.
+- Default CORS to no origins and `allow_credentials=False`.
+- Add per-instance bearer-token auth on all API routes — loopback binding is not authorization.
+- Return content references, not `parsed_content`/bytes, in search/list responses.
+- Reject `Origin: null` and non-allowlisted origins before routing.
 
 ## Disclosure timeline
 
 | Date (UTC) | Event |
 |---|---|
-| 2026-11-20 15:37 | Report finalised (F-01, CVSS 8.2) — `report.md`, `evidence/`, `poc/` |
-| 2026-11-20 16:36 | Vendor notice sent to `evermind@shanda.com` with evidence zip (`fd739c25…`) |
-| 2026-11-20 16:36 | This repo made public (report + evidence + PoC) |
-| 2026-11-23 17:23 | Upstream re-checked: cloned `EverMind-AI/EverOS` at HEAD `f476836`; **no fix** for F-01 |
-| 2026-11-24 | Re-verified at HEAD `6ac3898`: **no fix**. Submitted to VulnCheck — case `31e5306f-1a5c-4489-b142-4097d39c9af9` (see `submission/vulncheck/`) |
-
-## Fix verification — upstream `EverMind-AI/EverOS`
-
-Cloned `https://github.com/EverMind-AI/EverOS.git` at HEAD `f476836` (commit `feat(memtrace): add smartcomment execution tracing (#612)`, past v1.7.1 release `f1fa762`).
-Re-verified 2026-11-24 at HEAD `6ac3898` (24 commits past v1.7.1, still no new tag).
-Inspected `src/everos/config/settings.py`, `src/everos/entrypoints/api/middleware/cors.py`, `src/everos/component/parser/input.py`.
-
-| Setting / file | Value at HEAD `f476836` | Value at HEAD `6ac3898` (2026-11-24) | Fixed? |
-|---|---|---|---|
-| `file_uri_allow_dirs` default (`settings.py:610`) | `[]` — empty = allow any readable file | `[]` — unchanged | **NO** |
-| `file_uri_max_bytes` (`settings.py`) | `50 * 1024 * 1024` | `50 * 1024 * 1024` | N/A (size cap, not the issue) |
-| `DEFAULT_CORS_ORIGINS` (`cors.py`) | `["*"]` | `["*"]` — file untouched since v1.7.1 | **NO** |
-| `DEFAULT_CORS_ALLOW_CREDENTIALS` (`cors.py`) | `True` | `True` | **NO** |
-| `_validated_file_path` allowlist check (`input.py:106`) | `if allow and not any(...)` — empty allowlist skips the check | identical — `input.py` has zero diff since v1.7.1 | **NO** |
-| Any authentication on API routes | none | none — no auth dependency anywhere in `entrypoints/api` | **NO** |
-| Any commit after v1.7.1 touching CORS / `file_uri` / `input.py` | None | None (24 commits; `settings.py` churn is unrelated features) | **NO** |
-
-No commits between v1.7.1 (`f1fa762`) and HEAD (`6ac3898`) touch `cors.py`, the `file_uri_allow_dirs` validation path, or `input.py`. The latest tag is still v1.7.1 — there is no v1.7.2.
-
-**Conclusion: F-01 remains fully exploitable at HEAD `6ac3898`.** No fix released, no CVE/GHSA assigned yet.
-
-## Additional findings — audit 2026-11-24
-
-A second pass over upstream HEAD `6ac3898` (3 parallel hunters + live PoC verification) found further issues, all verified against a running instance — see **`audit-2026-11-24/`** (report + evidence + PoCs + `SHA256SUMS`):
-
-| ID | Finding | Severity | CVSS 3.1 vector | Score | Status |
-|---|---|---|---|---|---|
-| **EVEROS-2026-01** | F-01: CORS `*`+credentials + `file://` arbitrary read → browser exfil | High | `AV:N/AC:L/PR:N/UI:R/S:C/C:H/I:L/A:N` | **8.2** | submitted (VulnCheck + Vulners) |
-| **EVEROS-2026-02** | V-01: unauthenticated SSRF via `uri` items, response readback | High | `AV:N/AC:L/PR:N/UI:R/S:C/C:H/I:N/A:N` | **7.4** (8.6 if `UI:N`) | draft ready |
-| **EVEROS-2026-03** | V-02: knowledge doc IDOR — scope ignored on doc-keyed ops | Medium | `AV:N/AC:H/PR:N/UI:R/S:U/C:H/I:H/A:N` | **6.8** (9.1 if tenant-proxied, 7.4 local-only) | draft ready |
-| — | V-03: missing Origin checks on mutating routes (CSRF) | Medium | `AV:N/AC:L/PR:N/UI:R/S:C/C:L/I:L/A:N` | 6.1 | hardening note |
-| — | V-04: unauth `/cascade/quiesce` indexing DoS | Medium-Low | `AV:N/AC:L/PR:N/UI:R/S:U/C:N/I:N/A:H` | 6.5 | hardening note |
-| — | V-05: absolute paths in `original_file_path` | Low | `AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:N/A:N` | 5.3 | hardening note |
-
-Submission scope: **EVEROS-2026-01** (submitted to VulnCheck 2026-11-24, case `31e5306f-1a5c-4489-b142-4097d39c9af9`; Vulners CNA emailed same day), **EVEROS-2026-02** and **EVEROS-2026-03** — drafts in `submission/vulncheck/`, pending vendor contact. V-03..V-05 stay in this repo as documented hardening notes only.
-
-## Affected
-
-- EverOS 1.7.1 (commit `e5778edb4cbac71e359ea375f38cf805aae32b0c`), default configuration
-- Current main HEAD `6ac3898` — unfixed
-- Configuration: HTTP API enabled, `[multimodal]` parser configured (required for `file://` hydration)
-
-## Proven chain (low-privilege, no authentication)
-
-1. Victim loads an attacker-controlled page in a browser on the same machine as EverOS.
-2. Browser issues cross-origin preflight + data requests to `127.0.0.1:18777`.
-3. CORS reflects `Origin` and returns `Access-Control-Allow-Credentials: true` (root cause B).
-4. `POST /api/v2/memory/add` with `{"uri": "file:///etc/hostname", "type": "text", "ext": "txt"}` reads the file (root cause A).
-5. `parsed_content` is stored and returned by `POST /api/v2/memory/search`, exfiltrated cross-origin.
-
-Negative controls verified: allowlist set → symlink, `..` traversal, `file://localhost/` all rejected; `/etc/shadow` unreadable → HTTP 500.
-
-## Remediation (short)
-
-- Default `file_uri_allow_dirs` to deny-all when unset; require explicit opt-in directories; resolve symlinks before the check.
-- Default CORS to no origins and `allow_credentials=False`; require explicit allowlists.
-- Introduce per-instance bearer token authentication for all API routes; never rely on loopback binding as authorization.
-- Do not return `parsed_content` or content bytes in search/list DTOs; return references only.
-- Reject `Origin: null` and non-allowlisted origins before routing.
+| 2026-11-20 | Vendor notice → `evermind@shanda.com` (evidence zip `fd739c25…`) |
+| 2026-11-23/24 | Re-verified unfixed at HEAD `6ac3898` |
+| 2026-11-24 | VulnCheck submitted (case above) · Vulners CNA emailed · second audit added |
