@@ -31,18 +31,22 @@ It already contains: severity + CVSS 3.1 vector (8.2) + calculator link, CWE IDs
 affected product/versions, summary, attack path, impact, repro steps, the public
 report-repo URL, suggested remediation, and the disclosure timeline.
 
-## Request 2 — EVEROS-2026-02 (prepared, NOT yet submitted)
+## Request 2 — EVEROS-2026-02 (SSRF, High) — READY TO SUBMIT
 
-- **Title:** Unauthenticated server-side request forgery via `uri` content items, with response readback
-- **Severity:** High, CVSS 3.1 7.4 `AV:N/AC:L/PR:N/UI:R/S:C/C:H/I:N/A:N` (8.6 if `UI:N`)
-- **CWE:** CWE-918
-- **Details:** paste `details-EVEROS-2026-02.md`
-- **Gate:** vendor has NOT been contacted about this finding yet — send vendor addendum first, respect the acknowledgement window before VulnCheck submission.
+Shared fields: same as Request 1 (Name Teycir, teycir@users.noreply.github.com, GitHub Teycir,
+vendor EverMind AI, product EverOS / https://github.com/EverMind-AI/EverOS,
+tested version `EverOS @ 6ac3898e7755dfc41002bfdc9704279009a82b81` (origin/main, v1.7.1 line),
+AI-assisted=Yes, validated on production code=Yes, Shodan/Fofa=N/A, plan to publish=Yes).
 
-## Request 3 — EVEROS-2026-03 (prepared, NOT yet submitted)
+- **Vulnerability title/details:** paste `details-EVEROS-2026-02.md`
+- **Already reported to supplier?** Yes — email to `evermind@shanda.com` on 2026-11-24T19:07:27Z (follow-up covering this finding; first vendor notice 2026-11-20T16:36:50Z). No acknowledgement received as of submission.
+- **Coordinate disclosure?** Same decision as Request 1 — vendor contacted, no response; recommend "Yes — VulnCheck handles vendor outreach" if you want them to run point, or "No" since you've already done direct outreach.
+- **Already publicly disclosed?** No — flip the report repo public at send time (currently PRIVATE; the details text links to it).
+
+## Request 3 — EVEROS-2026-03 (IDOR, Medium) — prepared, NOT yet submitted
 
 - **Title:** Knowledge document IDOR — `doc_id`/`topic_id` operations ignore tenant scope
 - **Severity:** Medium, CVSS 3.1 6.8 `AV:N/AC:H/PR:N/UI:R/S:U/C:H/I:H/A:N` (9.1 if tenant-proxied)
 - **CWE:** CWE-639, CWE-862
 - **Details:** paste `details-EVEROS-2026-03.md`
-- **Gate:** same as above — vendor contact pending.
+- **Gate:** vendor contact now made (same follow-up email as 02) — can be submitted on the same terms as Request 2 whenever you choose.
