@@ -1,4 +1,6 @@
-# EverOS @ 6ac3898 — Hardened verification run (V-01 SSRF, V-02 IDOR, V-04 quiesce)
+# EverOS @ 6ac3898 — Hardened verification run
+
+Tracking IDs (internal, not CVEs): **EVEROS-2026-02 = V-01 SSRF**, **EVEROS-2026-03 = V-02 IDOR**, EVEROS-2026-04 = V-03 CSRF, EVEROS-2026-05 = V-04 quiesce DoS, EVEROS-2026-06 = V-05 path disclosure. Submission drafts: `submission/vulncheck/details-EVEROS-2026-0{2,3}.md`.
 
 Captured 2026-11-24T18:31–18:36Z against live server `127.0.0.1:18777`,
 root `/tmp/everos-poc-lab`, upstream `6ac3898e7755dfc41002bfdc9704279009a82b81`.

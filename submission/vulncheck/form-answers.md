@@ -30,3 +30,19 @@ Paste the full contents of `details-EVEROS-2026-01.md` in this field.
 It already contains: severity + CVSS 3.1 vector (8.2) + calculator link, CWE IDs,
 affected product/versions, summary, attack path, impact, repro steps, the public
 report-repo URL, suggested remediation, and the disclosure timeline.
+
+## Request 2 — EVEROS-2026-02 (prepared, NOT yet submitted)
+
+- **Title:** Unauthenticated server-side request forgery via `uri` content items, with response readback
+- **Severity:** High, CVSS 3.1 7.5 `AV:N/AC:L/PR:N/UI:R/S:C/C:H/I:N/A:N`
+- **CWE:** CWE-918
+- **Details:** paste `details-EVEROS-2026-02.md`
+- **Gate:** vendor has NOT been contacted about this finding yet — send vendor addendum first, respect the acknowledgement window before VulnCheck submission.
+
+## Request 3 — EVEROS-2026-03 (prepared, NOT yet submitted)
+
+- **Title:** Knowledge document IDOR — `doc_id`/`topic_id` operations ignore tenant scope
+- **Severity:** Medium-High, CVSS 3.1 7.1 `AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:N`
+- **CWE:** CWE-639, CWE-862
+- **Details:** paste `details-EVEROS-2026-03.md`
+- **Gate:** same as above — vendor contact pending.
