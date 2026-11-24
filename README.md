@@ -56,11 +56,11 @@ A second pass over upstream HEAD `6ac3898` (3 parallel hunters + live PoC verifi
 |---|---|---|---|
 | V-01 | Unauthenticated SSRF via `uri` content items (everalgo fetches http(s) with no private-IP policy; response readable via `/search`; redirects followed) | High (~CVSS 7.5) | verified ×3 paths |
 | V-02 | Knowledge document IDOR — `doc_id`/`topic_id` ops ignore `app_id`/`project_id`; cross-scope read + delete | Medium-High | verified |
-| V-03 | Missing Origin validation on all mutating routes (only `/purge` checks) — CSRF write/delete | Medium | code-verified |
-| V-04 | Unauthenticated `POST /cascade/quiesce` → permanent indexing DoS until restart | Medium-Low | verified |
-| V-05 | Absolute server paths in `original_file_path` responses | Low | verified |
+| V-03 | Missing Origin validation on all mutating routes (only `/purge` checks) — CSRF write/delete | Medium | code-verified — **hardening note, not submitted** |
+| V-04 | Unauthenticated `POST /cascade/quiesce` → permanent indexing DoS until restart | Medium-Low | verified — **hardening note, not submitted** |
+| V-05 | Absolute server paths in `original_file_path` responses | Low | verified — **hardening note, not submitted** |
 
-V-01 and V-02 are distinct root causes from F-01 (missing URI egress policy; missing tenant authorization) and are candidates for separate CVE submissions.
+Submission scope: **EVEROS-2026-01** (this report, submitted to VulnCheck 2026-11-24, case `31e5306f-1a5c-4489-b142-4097d39c9af9`; Vulners CNA emailed same day), **EVEROS-2026-02** (V-01 SSRF) and **EVEROS-2026-03** (V-02 IDOR) — drafts in `submission/vulncheck/`, pending vendor contact. V-03..V-05 stay in this repo as documented hardening notes only.
 
 ## Affected
 
